@@ -1,0 +1,24 @@
+body,
+html {
+  margin: 0;
+}
+
+#app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.index-sub-title {
+  font-family: Lexend;
+  font-size: 24px;
+  line-height: 36px;
+  font-weight: 700;
+  color: #000000ff;
+}
