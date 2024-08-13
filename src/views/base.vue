@@ -6,22 +6,13 @@
     <el-container>
       <el-aside width="200px">
         <el-menu router :default-active="router.fullPath" @select="handleSelect">
-          <el-menu-item :router="{ name: 'seller-product' }" index="/seller/product"
-            >商品管理</el-menu-item
-          >
-          <el-menu-item :router="{ name: 'seller-order' }" index="/seller/order"
-            >订单管理</el-menu-item
-          >
-          <el-menu-item :router="{ name: 'seller-buyer' }" index="/seller/buyer"
-            >用户管理</el-menu-item
-          >
-          <el-menu-item :router="{ name: 'seller-evaluate' }" index="/seller/evaluate"
-            >评价与反馈</el-menu-item
-          >
+          <NavItem v-for="child in nav" base_path="/" :item="child"/>
         </el-menu>
       </el-aside>
       <el-main>
-        <router-view />
+        <el-container class="main">
+          <router-view />
+        </el-container>
       </el-main>
     </el-container>
   </el-container>
@@ -31,6 +22,8 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import CHeader from '@/components/header/index.vue'
+import NavItem from '@/components/nav-item/index.vue'
+import { nav } from '@/router'
 
 const router = useRoute()
 
@@ -59,5 +52,12 @@ function handleSelect(index: string) {
 .content {
   flex: 1;
   padding: 20px;
+}
+
+.main{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 </style>

@@ -1,19 +1,27 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 
 const route = useRoute()
+const now = new Date();
+const formattedDate = now.toLocaleDateString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'});
+console.log(formattedDate)
+const date = ref<string>(formattedDate)
+
 </script>
 
 <template>
   <header class="navbar">
     <div class="top">
       <div class="logo">
-        <img src="/logo.svg" />
-        <el-text class="name">二手乐 卖家工作台</el-text>
+        <div class="t">
+          <img src="/logo.svg" />
+          <el-text class="name">{{route.meta.title}}</el-text>
+        </div>
+        <el-text class="span" type="primary">{{date}}</el-text>
       </div>
       <nav>
         <ul class="nav-left">
-          <router-link to="/"><el-button type="primary">前往二手平台</el-button></router-link>
         </ul>
         <div class="nav-right">
           <el-button link tag="a" href="/register" plain type="danger">退出登录</el-button>
@@ -28,7 +36,6 @@ const route = useRoute()
 
 .navbar {
   width: 100%;
-  padding: 10px;
 
   .top {
     background: #ffffffff;
@@ -50,17 +57,28 @@ nav {
 
 .logo {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: end;
+
+  .t{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  >.span{
+    font-size: 12px;
+    align-self: unset;
+  }
 
   img {
-    width: 36px;
-    height: 36px;
+    width: 22px;
+    height: 22px;
   }
   .name {
     font-family: Lexend;
-    font-size: 28px;
+    font-size: 20px;
     line-height: 42px;
     font-weight: 700;
     color: #000000ff;
