@@ -1,10 +1,13 @@
-import type {RouteRecordRaw} from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
+import { PermissionEnum } from '@/stores'
 
 type Meta = {
-  title: string;
-};
+  title: string
+  permission?: PermissionEnum[]
+  no_permission?: PermissionEnum[]
+}
 
 export type RouteRaw = {
-  meta: Meta;
+  meta: Meta
   children?: RouteRaw[]
 } & RouteRecordRaw

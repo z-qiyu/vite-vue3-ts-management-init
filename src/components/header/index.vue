@@ -1,13 +1,19 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
+import { useUserStore } from '@/stores'
+import logo from '@/assets/logo.svg'
 
 const route = useRoute()
-const now = new Date();
-const formattedDate = now.toLocaleDateString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'});
+const now = new Date()
+const user = useUserStore()
+const formattedDate = now.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+})
 console.log(formattedDate)
 const date = ref<string>(formattedDate)
-
 </script>
 
 <template>
@@ -15,16 +21,21 @@ const date = ref<string>(formattedDate)
     <div class="top">
       <div class="logo">
         <div class="t">
-          <img src="/logo.svg" />
-          <el-text class="name">{{route.meta.title}}</el-text>
+          <img :src="logo" />
+          <el-text class="name">{{ route.meta.title }}</el-text>
         </div>
-        <el-text class="span" type="primary">{{date}}</el-text>
+        <el-text class="span" type="primary">{{ date }}</el-text>
       </div>
       <nav>
-        <ul class="nav-left">
-        </ul>
+        <ul class="nav-left"></ul>
         <div class="nav-right">
-          <el-button link tag="a" href="/register" plain type="danger">退出登录</el-button>
+          <div style="display: flex; align-items: center; gap: 9px" v-if="user.isLoggedIn">
+            <el-text type="primary">{{
+              user.userInfo.first_name || user.userInfo.username
+            }}</el-text>
+            <el-link href="/login" plain type="danger">退出登录</el-link>
+          </div>
+          <el-button v-else link tag="a" href="/login" plain type="primary">前往登录</el-button>
         </div>
       </nav>
     </div>
@@ -60,14 +71,14 @@ nav {
   flex-direction: column;
   align-items: end;
 
-  .t{
+  .t {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 10px;
   }
 
-  >.span{
+  > .span {
     font-size: 12px;
     align-self: unset;
   }

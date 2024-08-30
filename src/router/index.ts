@@ -2,57 +2,28 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import type { RouteRaw } from '@/router/types'
+import {
+  ImmediateArrangement,
+  MaterialsEquipment,
+  System,
+  TestingManagement,
+  TestPlanDetail
+} from '@/views/pages/routers'
 
-export const nav:RouteRaw[] = [
+export const nav: RouteRaw[] = [
   {
     path: '',
     name: 'home',
     component: () => import('@/views/pages/home.vue'),
-    meta:{
+    meta: {
       title: '实验管理系统'
     }
   },
-  {
-    path: 'immediate-arrangement',
-    name: 'immediate-arrangement',
-    meta:{
-      title: '近期安排'
-    },
-    children: [
-      {
-        path: 'work',
-        name: 'work',
-        component: () => import('@/views/pages/immediate-arrangement/work.vue'),
-        meta:{
-          title: '近期计划工作'
-        }
-      },
-      {
-        path: 'summarize',
-        name: 'summarize',
-        component: () => import('@/views/pages/immediate-arrangement/summarize.vue'),
-        meta:{
-          title: '每日工作总结'
-        }
-      },
-      {
-        path: 'done',
-        name: 'done',
-        component: () => import('@/views/pages/immediate-arrangement/done.vue'),
-        meta:{
-          title: '近期完成工作'
-        }
-      },
-      {
-        path: 'system-change',
-        name: 'system-change',
-        component: () => import('@/views/pages/immediate-arrangement/system-change.vue'),
-        meta:{
-          title: '近期系统变化'
-        }
-      },
-    ]
-  },
+
+  ImmediateArrangement,
+  MaterialsEquipment,
+  TestingManagement,
+  System
 ]
 
 const routes: RouteRecordRaw[] = [
@@ -61,6 +32,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/base.vue'),
     children: nav
   },
+  ...TestPlanDetail,
   {
     path: '/login',
     name: 'login',
@@ -78,11 +50,14 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  const user = useUserStore()
+router.beforeEach((to:RouteRaw, from, next) => {
+  const users = useUserStore()
   const publicPages = ['/login', '/register', '/']
-  const isAuthenticated = user.isLoggedIn
-
+  const isAuthenticated = users.isLoggedIn
+  if(!users.showNav(to.meta.permission,to.meta.no_permission)){
+    ElMessage.error('没有权限')
+    next({ name: 'home' })
+  }
   if (publicPages.includes(to.path) || isAuthenticated) {
     next()
   } else {

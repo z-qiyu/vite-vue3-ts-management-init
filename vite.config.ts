@@ -16,6 +16,7 @@ export default defineConfig({
     visualizer(), // 构建后分析 bundle
     vueDevTools()
   ],
+  base:'./',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

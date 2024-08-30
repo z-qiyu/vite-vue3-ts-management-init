@@ -1,7 +1,7 @@
 <template>
   <div class="register-container">
     <el-card class="register-card">
-      <h2 class="register-title"><img class="logo" alt="logo" src="/logo.svg" />注册</h2>
+      <h2 class="register-title"><img class="logo" alt="logo" :src="logo" />注册</h2>
       <el-form :model="registerForm" :rules="rules" label-width="100px" class="register-form">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="registerForm.username" placeholder="请输入用户名"></el-input>
@@ -41,6 +41,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import logo from '@/assets/logo.svg'
 import {
   ElForm,
   ElFormItem,

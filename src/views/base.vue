@@ -5,8 +5,10 @@
     </el-header>
     <el-container>
       <el-aside width="200px">
-        <el-menu router :default-active="router.fullPath" @select="handleSelect">
-          <NavItem v-for="child in nav" base_path="/" :item="child"/>
+        <el-menu unique-opened router :default-active="router.fullPath" @select="handleSelect">
+          <template v-for="child in nav" >
+            <NavItem v-if="showNav(child.meta.permission,child.meta.no_permission)" base_path="/" :item="child" />
+          </template>
         </el-menu>
       </el-aside>
       <el-main>
@@ -24,8 +26,11 @@ import { useRoute } from 'vue-router'
 import CHeader from '@/components/header/index.vue'
 import NavItem from '@/components/nav-item/index.vue'
 import { nav } from '@/router'
+import { useUserStore } from '@/stores'
 
+console.log(nav)
 const router = useRoute()
+const {showNav} = useUserStore()
 
 // 当前选中的菜单项
 const activeTab = ref('1')
@@ -54,7 +59,7 @@ function handleSelect(index: string) {
   padding: 20px;
 }
 
-.main{
+.main {
   width: 100%;
   height: 100%;
   display: flex;

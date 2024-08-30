@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-card class="login-card">
-      <h2 class="login-title"><img class="logo" alt="logo" src="/logo.svg" /> 登录</h2>
+      <h2 class="login-title"><img class="logo" alt="logo" :src="logo" /> 登录</h2>
       <el-form :model="loginForm" :rules="rules" ref="form" label-width="100px" class="login-form">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="loginForm.username" placeholder="请输入用户名"></el-input>
@@ -34,6 +34,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 import type { FormInstance } from 'element-plus'
+import logo from '@/assets/logo.svg'
 
 const loginForm = ref({
   username: '',
@@ -53,16 +54,15 @@ const form = ref<FormInstance>()
 const submitForm = async () => {
   try {
     // Validate the form
-    if (form.value) await form.value.validate()
-
-    // Call the login API
-    const response = userStore.login(loginForm.value.username, loginForm.value.password)
-    // Redirect to the home page or any other page
-    router.push({ name: 'index' })
+    if (form.value)
+      await form.value.validate((isValid) => {
+        if (isValid) {
+          const response = userStore.login(loginForm.value.username, loginForm.value.password)
+          router.push({ name: 'home' })
+        }
+      })
   } catch (error) {
-    // Handle login errors (e.g., display error messages)
     console.error('Login failed', error)
-    // Display error message to the user if needed
   }
 }
 </script>

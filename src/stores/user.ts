@@ -1,22 +1,35 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { AxiosResponse } from 'axios'
 import { loginUser, fetchUserProfile, logoutUser, updateUserProfile } from '@/apis'
 import type { UserProfile, UpdateProfileRequest, LoginRequest, LoginResponse } from '@/apis'
 import { useRouter } from 'vue-router'
 
+export enum PermissionEnum {
+    SUPERADMIN = '超级管理员',
+    ADMIN = '管理员',
+    STAFF = '工作人员',
+    VISITOR = '访客'
+}
+
 export const useUserStore = defineStore(
   'user',
   () => {
     // User information
     const userInfo = ref<UserProfile>({
-      id: '',
+      id: null,
       last_name: '',
       email: '',
-      phone_number: '',
+      phone: '',
       first_name: '',
-      address: ''
+      is_staff: false,
+      is_superuser: false,
+      date_joined: '',
+      is_active: false,
+      is_admin: false,
+      password: '',
+      username: ''
     })
 
     const isLoggedIn = ref<boolean>(false)
@@ -27,15 +40,42 @@ export const useUserStore = defineStore(
 
     const router = useRouter() // Assuming this is correctly typed by the 'vue-router' module
 
+    const permission = computed<PermissionEnum>(() => {
+      if(!isLoggedIn.value){
+        return PermissionEnum.VISITOR
+      }
+      if(userInfo.value.is_superuser) return PermissionEnum.SUPERADMIN;
+      if(userInfo.value.is_admin) return PermissionEnum.ADMIN;
+      if(userInfo.value.is_staff) return PermissionEnum.STAFF;
+
+      return PermissionEnum.VISITOR
+    })
+
+    const showNav = (p?:PermissionEnum[],no_p?:PermissionEnum[]):boolean => {
+      if(p === undefined && no_p === undefined) {
+        return true
+      }else{
+        if(no_p !== undefined && no_p.findIndex((i: PermissionEnum)=>i === permission.value) > -1) return false;
+        if(p === undefined) return true;
+        return p.findIndex((i: PermissionEnum)=>i === permission.value) > -1
+      }
+    }
+
     const logout = async () => {
       token.value = null
       userInfo.value = {
-        id: '',
+        id: null,
         last_name: '',
         email: '',
-        phone_number: '',
+        phone: '',
         first_name: '',
-        address: ''
+        is_staff: false,
+        is_superuser: false,
+        date_joined: '',
+        is_active: false,
+        is_admin: false,
+        password: '',
+        username: ''
       }
       orderAuth.value = null
       isLoggedIn.value = false
@@ -59,6 +99,7 @@ export const useUserStore = defineStore(
         const { access } = response.data
         token.value = access
         isLoggedIn.value = true
+        fetchProfile()
       } catch (error: any) {
         ElMessage.error(`Login failed: ${error.toString()}`)
       }
@@ -67,7 +108,7 @@ export const useUserStore = defineStore(
     const initializeFromToken = () => {
       if (token.value) {
         isLoggedIn.value = true
-        fetchProfile() // Optionally fetch user info based on the token
+        fetchProfile() // Optionally fetch users info based on the token
       }
     }
 
@@ -93,7 +134,9 @@ export const useUserStore = defineStore(
       logout,
       fetchProfile,
       updateProfile,
-      initializeFromToken
+      initializeFromToken,
+      permission,
+      showNav
     }
   },
   {
